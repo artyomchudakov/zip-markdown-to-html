@@ -5,13 +5,15 @@ import showdown from 'showdown';
 import { saveAs } from 'file-saver';
 import { Search } from 'gitea-react-toolkit';
 /* Material-Ui 4 */
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { Checkbox } from '@material-ui/core';
+import {
+  Backdrop,
+  Button,
+  Checkbox,
+  CircularProgress,
+  Container,
+  FormControlLabel,
+  Paper,
+} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import './styles.css';
@@ -19,7 +21,7 @@ import './styles.css';
 let initialZipFileLength = 0;
 
 const ZipMarkdownToHtml = () => {
-  const [input, setInput] = useState([]);
+  const [input, setInput] = useState();
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +31,7 @@ const ZipMarkdownToHtml = () => {
   const handleCheckboxChange = (e) => setIsCheckboxChecked(e.target.checked);
 
   const convertFileInput = () => {
-    if (input === undefined || input.length === 0) {
+    if (!input) {
       setShowAlert(true);
       return;
     }
@@ -44,9 +46,8 @@ const ZipMarkdownToHtml = () => {
         const onlyMdFilesLength = Object.keys(zip.files).filter((file) =>
           file.match(/.md/)
         ).length;
-        initialZipFileLength =
-          isCheckboxChecked === true ? allFilesLength : onlyMdFilesLength;
-        Object.keys(zip.files).forEach((fileName) => {
+        initialZipFileLength = isCheckboxChecked ? allFilesLength : onlyMdFilesLength;
+        for (let fileName of Object.keys(zip.files)) {
           zip.files[fileName].async('string').then((fileData) => {
             if (fileName.match(/.md/)) {
               const converter = new showdown.Converter();
@@ -62,7 +63,7 @@ const ZipMarkdownToHtml = () => {
               }
             }
           });
-        });
+        }
         setConvertedFiles(filesArray);
       } catch (err) {
         console.error('Error: ', err.message);
@@ -91,11 +92,8 @@ const ZipMarkdownToHtml = () => {
       )}% Files were processed. please try again in a few seconds`;
       alert(progress);
     }
-    // console.log(initialZipFileLength);
-    // console.log(convertedFiles.length);
 
     if (convertedFiles.length === initialZipFileLength) {
-      // console.log("READY FOR DOWNLOAD");
       const zipFile = new JSZip();
       const files = convertedFiles;
       for (let file = 0; file < files.length; file++) {
@@ -121,13 +119,10 @@ const ZipMarkdownToHtml = () => {
     }, 100);
   }, [convertedFiles]);
 
-  const loadingAnimation = useMemo(
-    () => (
-      <Backdrop open={true} style={{ zIndex: 1, color: '#fff' }}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    ),
-    []
+  const loadingAnimation = (
+    <Backdrop open={true} style={{ zIndex: 1, color: '#fff' }}>
+      <CircularProgress color="inherit" />
+    </Backdrop>
   );
 
   /* Alert if user tries to convert empty selection */
@@ -184,9 +179,7 @@ const ZipMarkdownToHtml = () => {
               defaultOwner="unfoldingword"
               defaultQuery="en_t"
               onRepository={(data) => {
-                const url = data.html_url;
-                // fetchGiteaRepository(url, data.name);
-                fetchGiteaRepository(url);
+                fetchGiteaRepository(data.html_url);
               }}
               config={{ server: 'https://bg.door43.org' }}
             />

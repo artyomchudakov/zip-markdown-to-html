@@ -2,11 +2,7 @@ import React from 'react';
 import { ZipMarkdownToHtml } from './components';
 
 const App = () => {
-  return (
-    <>
-      <ZipMarkdownToHtml />
-    </>
-  );
+  return <ZipMarkdownToHtml />;
 };
 
 export default App;
