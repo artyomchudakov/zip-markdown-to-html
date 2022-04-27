@@ -21,17 +21,17 @@ import './styles.css';
 let initialZipFileLength = 0;
 
 const ZipMarkdownToHtml = () => {
-  const [input, setInput] = useState();
+  const [fileInput, setFileInput] = useState();
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  const handleInput = (e) => setInput(e.target.files[0]);
+  const handleInput = (e) => setFileInput(e.target.files[0]);
   const handleCheckboxChange = (e) => setIsCheckboxChecked(e.target.checked);
 
   const convertFileInput = () => {
-    if (!input) {
+    if (!fileInput) {
       setShowAlert(true);
       return;
     }
@@ -69,7 +69,7 @@ const ZipMarkdownToHtml = () => {
         console.error('Error: ', err.message);
       }
     };
-    convert(input);
+    convert(fileInput);
   };
 
   function fetchGiteaRepository(link) {
@@ -78,7 +78,8 @@ const ZipMarkdownToHtml = () => {
       .get(`${link}/archive/master.zip`, { responseType: 'arraybuffer' })
       .then((response) => {
         const archive = new Blob([response.data], { type: 'application/zip' });
-        setInput(archive);
+        setFileInput(archive);
+        setIsLoading(false);
       })
       .catch((err) => console.error(err.message));
   }
@@ -95,9 +96,8 @@ const ZipMarkdownToHtml = () => {
 
     if (convertedFiles.length === initialZipFileLength) {
       const zipFile = new JSZip();
-      const files = convertedFiles;
-      for (let file = 0; file < files.length; file++) {
-        zipFile.file(files[file].name, files[file]);
+      for (let file = 0; file < convertedFiles.length; file++) {
+        zipFile.file(convertedFiles[file].name, convertedFiles[file]);
       }
       zipFile.generateAsync({ type: 'blob' }).then((content) => {
         saveAs(content, 'converted.zip');
@@ -107,9 +107,6 @@ const ZipMarkdownToHtml = () => {
 
   /* CircularProgress loading animation */
   useEffect(() => {
-    setIsLoading(false);
-  }, [input]);
-  useEffect(() => {
     const interval = setInterval(() => {
       setIsLoading(true);
       if (convertedFiles.length === initialZipFileLength) {
@@ -118,12 +115,6 @@ const ZipMarkdownToHtml = () => {
       }
     }, 100);
   }, [convertedFiles]);
-
-  const loadingAnimation = (
-    <Backdrop open={true} style={{ zIndex: 1, color: '#fff' }}>
-      <CircularProgress color="inherit" />
-    </Backdrop>
-  );
 
   /* Alert if user tries to convert empty selection */
   useEffect(() => {
@@ -145,7 +136,6 @@ const ZipMarkdownToHtml = () => {
 
   return (
     <Container maxWidth="lg">
-      {isLoading && loadingAnimation}
       {showAlert && emptyConversionAttempt}
       <section>
         <h1>CONVERT MULTIPLE MARKDOWN FILES TO HTML - AS ZIP</h1>
@@ -195,14 +185,7 @@ const ZipMarkdownToHtml = () => {
       </section>
       <div>
         {/* File input */}
-        <input
-          style={{ display: 'none' }}
-          type="file"
-          id="fileInput"
-          accept=".zip"
-          onChange={handleInput}
-          // onClick={(e) => (e.target.value = null)}
-        />
+        <input type="file" id="fileInput" accept=".zip" onChange={handleInput} />
         <label htmlFor="fileInput">
           <Button variant="contained" color="primary" component="span" align="center">
             select from PC
@@ -231,6 +214,9 @@ const ZipMarkdownToHtml = () => {
           }
         />
       </div>
+      <Backdrop open={isLoading} style={{ zIndex: 1, color: '#fff' }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Container>
   );
 };
