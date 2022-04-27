@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { AppDescription, LocalConversionDescription } from './AppDescription';
+import AppDescription from './Static/AppDescription';
+import LocalConversionDescription from './Static/LocalConversionDescription';
+import EmptyConversionAttempt from './Static/EmptyConversionAttempt';
+import LoadingAnimation from './Static/LoadingAnimation';
+
 import axios from 'axios';
 import JSZip from 'jszip';
 import showdown from 'showdown';
 import { saveAs } from 'file-saver';
+
 import { Search } from 'gitea-react-toolkit';
-/* Material-Ui 4 */
-import {
-  Backdrop,
-  Button,
-  Checkbox,
-  CircularProgress,
-  Container,
-  FormControlLabel,
-  Paper,
-} from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
+
+import { Button, Checkbox, Container, FormControlLabel, Paper } from '@material-ui/core';
 
 import { useStyles } from './style';
 
@@ -27,6 +23,7 @@ const ZipMarkdownToHtml = () => {
   const [isIncludeAllFilesChecked, setIsIncludeAllFilesChecked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
   const classes = useStyles();
 
   const handleUserFileInput = (e) => setFileInput(e.target.files[0]);
@@ -130,32 +127,20 @@ const ZipMarkdownToHtml = () => {
     };
   }, [showAlert]);
 
-  const emptyConversionAttempt = (
-    <Alert severity="error">
-      <AlertTitle>EMPTY CONVERSION ATTEMPT</AlertTitle>
-      You didn't select anything, trying to convert an empty selection. <br />
-      <strong>Select a repository or ZIP-archive from your computer.</strong>
-    </Alert>
-  );
-
   return (
     <Container className={classes.root}>
-      {showAlert && emptyConversionAttempt}
+      {showAlert && <EmptyConversionAttempt />}
       <AppDescription />
-      {
-        <div>
-          <Paper className={classes.paper} elevation={3}>
-            <Search
-              defaultOwner="unfoldingword"
-              defaultQuery="en_t"
-              onRepository={(data) => {
-                fetchGiteaRepository(data.html_url);
-              }}
-              config={{ server: 'https://bg.door43.org' }}
-            />
-          </Paper>
-        </div>
-      }
+      <Paper className={classes.paper} elevation={3}>
+        <Search
+          defaultOwner="unfoldingword"
+          defaultQuery="en_t"
+          onRepository={(data) => {
+            fetchGiteaRepository(data.html_url);
+          }}
+          config={{ server: 'https://bg.door43.org' }}
+        />
+      </Paper>
       <LocalConversionDescription />
       <div className={classes.btnContainer}>
         <input
@@ -177,23 +162,19 @@ const ZipMarkdownToHtml = () => {
           download
         </Button>
       </div>
-      <div>
-        <FormControlLabel
-          label={`include ${
-            isIncludeAllFilesChecked ? 'all' : 'only converted'
-          } files to the conversion result`}
-          control={
-            <Checkbox
-              checked={isIncludeAllFilesChecked}
-              onChange={handleCheckboxChange}
-              color="primary"
-            />
-          }
-        />
-      </div>
-      <Backdrop open={isLoading} className={classes.backdrop}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <FormControlLabel
+        label={`include ${
+          isIncludeAllFilesChecked ? 'all' : 'only converted'
+        } files to the conversion result`}
+        control={
+          <Checkbox
+            checked={isIncludeAllFilesChecked}
+            onChange={handleCheckboxChange}
+            color="primary"
+          />
+        }
+      />
+      <LoadingAnimation open={isLoading} />
     </Container>
   );
 };

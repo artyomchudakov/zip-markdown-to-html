@@ -13,8 +13,8 @@ export const useStyles = makeStyles((theme) => ({
   },
 
   backdrop: {
-    zIndex: 1,
-    color: '#fff',
+    zIndex: theme.zIndex.drawer + 1,
+    color: theme.palette.grey[100],
   },
   paper: {
     maxHeight: '40vh',

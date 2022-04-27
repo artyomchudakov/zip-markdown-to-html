@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const AppDescription = () => {
+const AppDescription = () => {
   return (
     <section>
       <h1>CONVERT MULTIPLE MARKDOWN FILES TO HTML - AS ZIP</h1>
@@ -30,11 +30,4 @@ export const AppDescription = () => {
   );
 };
 
-export const LocalConversionDescription = () => {
-  return (
-    <section>
-      <h2>Local Conversion</h2>
-      <p>The same can be done locally from your computer. UPLOAD - CONVERT - DOWNLOAD</p>
-    </section>
-  );
-};
+export default AppDescription;
