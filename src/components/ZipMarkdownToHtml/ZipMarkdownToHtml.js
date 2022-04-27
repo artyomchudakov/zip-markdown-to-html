@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import JSZip from 'jszip';
 import showdown from 'showdown';
@@ -14,21 +14,22 @@ import {
   FormControlLabel,
   Paper,
 } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import './styles.css';
+import { Alert, AlertTitle } from '@material-ui/lab';
+
+import { useStyles } from './style';
 
 let initialZipFileLength = 0;
 
 const ZipMarkdownToHtml = () => {
   const [fileInput, setFileInput] = useState();
   const [convertedFiles, setConvertedFiles] = useState([]);
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState(true);
+  const [isIncludeAllFilesChecked, setIsIncludeAllFilesChecked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const classes = useStyles();
 
-  const handleInput = (e) => setFileInput(e.target.files[0]);
-  const handleCheckboxChange = (e) => setIsCheckboxChecked(e.target.checked);
+  const handleUserFileInput = (e) => setFileInput(e.target.files[0]);
+  const handleCheckboxChange = (e) => setIsIncludeAllFilesChecked(e.target.checked);
 
   const convertFileInput = () => {
     if (!fileInput) {
@@ -46,7 +47,9 @@ const ZipMarkdownToHtml = () => {
         const onlyMdFilesLength = Object.keys(zip.files).filter((file) =>
           file.match(/.md/)
         ).length;
-        initialZipFileLength = isCheckboxChecked ? allFilesLength : onlyMdFilesLength;
+        initialZipFileLength = isIncludeAllFilesChecked
+          ? allFilesLength
+          : onlyMdFilesLength;
         for (let fileName of Object.keys(zip.files)) {
           zip.files[fileName].async('string').then((fileData) => {
             if (fileName.match(/.md/)) {
@@ -56,7 +59,7 @@ const ZipMarkdownToHtml = () => {
               const newFile = new File([blob], fileName.replace('.md', '.html'));
               filesArray.push(newFile);
             } else {
-              if (isCheckboxChecked) {
+              if (isIncludeAllFilesChecked) {
                 const blob = new Blob([fileData]);
                 const nonMdFile = new File([blob], fileName);
                 filesArray.push(nonMdFile);
@@ -135,13 +138,13 @@ const ZipMarkdownToHtml = () => {
   );
 
   return (
-    <Container maxWidth="lg">
+    <Container className={classes.root}>
       {showAlert && emptyConversionAttempt}
       <section>
         <h1>CONVERT MULTIPLE MARKDOWN FILES TO HTML - AS ZIP</h1>
         <p>
-          The application converts all markdown files to HTML and gives you the option to
-          save a new zip archive with already converted files.
+          The application converts all markdown files inside selected Zip - to HTML and
+          gives you the option to save a new zip archive with already converted files.
         </p>
         <p>
           Using the checkbox at the bottom of the page, you can include other (non-.md)
@@ -164,7 +167,7 @@ const ZipMarkdownToHtml = () => {
       </section>
       {
         <div>
-          <Paper style={{ maxHeight: '40vh', overflow: 'scroll' }} elevation={3}>
+          <Paper className={classes.paper} elevation={3}>
             <Search
               defaultOwner="unfoldingword"
               defaultQuery="en_t"
@@ -180,15 +183,21 @@ const ZipMarkdownToHtml = () => {
       <section>
         <h3>Local Conversion</h3>
         <p>
-          The same can be done locally from your computer. SELECT - CONVERT - DOWNLOAD
+          The same can be done locally from your computer. UPLOAD - CONVERT - DOWNLOAD
         </p>
       </section>
-      <div>
+      <div className={classes.btnContainer}>
         {/* File input */}
-        <input type="file" id="fileInput" accept=".zip" onChange={handleInput} />
+        <input
+          className={classes.fileInput}
+          type="file"
+          id="fileInput"
+          accept=".zip"
+          onChange={handleUserFileInput}
+        />
         <label htmlFor="fileInput">
           <Button variant="contained" color="primary" component="span" align="center">
-            select from PC
+            upload
           </Button>
         </label>
         {/* Convert file Button */}
@@ -202,19 +211,19 @@ const ZipMarkdownToHtml = () => {
       </div>
       <div>
         <FormControlLabel
-          label={`save ${
-            isCheckboxChecked ? 'all' : 'only converted'
+          label={`include ${
+            isIncludeAllFilesChecked ? 'all' : 'only converted'
           } files to the conversion result`}
           control={
             <Checkbox
-              checked={isCheckboxChecked}
+              checked={isIncludeAllFilesChecked}
               onChange={handleCheckboxChange}
               color="primary"
             />
           }
         />
       </div>
-      <Backdrop open={isLoading} style={{ zIndex: 1, color: '#fff' }}>
+      <Backdrop open={isLoading} className={classes.backdrop}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </Container>
