@@ -156,10 +156,8 @@ const ZipMarkdownToHtml = () => {
           </Paper>
         </div>
       }
-      {/* LOCAL CONVERSION and OTHER Buttons */}
       <LocalConversionDescription />
       <div className={classes.btnContainer}>
-        {/* File input */}
         <input
           className={classes.fileInput}
           type="file"
@@ -172,11 +170,9 @@ const ZipMarkdownToHtml = () => {
             upload
           </Button>
         </label>
-        {/* Convert file Button */}
         <Button variant="contained" color="secondary" onClick={convertFileInput}>
           convert
         </Button>
-        {/* Download Button with Checkbox */}
         <Button variant="contained" color="primary" onClick={downloadResult}>
           download
         </Button>
