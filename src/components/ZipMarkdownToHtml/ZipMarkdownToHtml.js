@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import AppDescription from './Static/AppDescription';
-import LocalConversionDescription from './Static/LocalConversionDescription';
-import EmptyConversionAttempt from './Static/EmptyConversionAttempt';
-import LoadingAnimation from './Static/LoadingAnimation';
+// import AppDescription from '../Static/AppDescription';
+// import LocalConversionDescription from '../Static/LocalConversionDescription';
+// import EmptyConversionAttempt from '../Static/EmptyConversionAttempt';
+// import LoadingAnimation from '../Static/LoadingAnimation';
+import {
+  AppDescription,
+  LocalConversionDescription,
+  EmptyConversionAttempt,
+  LoadingAnimation,
+} from '../Static';
 
 import axios from 'axios';
 import JSZip from 'jszip';
