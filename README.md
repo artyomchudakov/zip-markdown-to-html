@@ -19,4 +19,4 @@ Once it is fetched from the server - Convert & Download - Enjoy!
 To view the repository on the server, click on the icon to the right of the repository
 
 ### Local Conversion
-The same can be done locally from your computer. SELECT - CONVERT & DOWNLOAD
+The same can be done locally from your computer. UPLOAD - CONVERT & DOWNLOAD
