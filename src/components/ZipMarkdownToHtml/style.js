@@ -6,20 +6,18 @@ export const useStyles = makeStyles((theme) => ({
     fontFamily: 'sans-serif',
     lineHeight: 1.5,
   },
+
   btnContainer: {
     '& > *': {
       margin: theme.spacing(0, 1),
     },
   },
 
-  backdrop: {
-    zIndex: theme.zIndex.drawer,
-    color: theme.palette.grey[100],
-  },
   paper: {
     maxHeight: '40vh',
     overflow: 'scroll',
   },
+
   fileInput: {
     display: 'none',
   },

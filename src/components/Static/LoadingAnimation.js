@@ -1,6 +1,6 @@
 import React from 'react';
 import { Backdrop, CircularProgress } from '@material-ui/core';
-import { useStyles } from '../ZipMarkdownToHtml/style';
+import { useStyles } from './style';
 const LoadingAnimation = (props) => {
   const classes = useStyles();
   return (
