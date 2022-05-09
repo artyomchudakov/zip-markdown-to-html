@@ -1,5 +1,5 @@
 # MARKDOWN TO HTML
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a9cfe7a7-f3bd-4db3-9b12-252a1d3c46f0/deploy-status)](https://app.netlify.com/sites/zip-md-to-html/deploys)
+
 ## CONVERT MULTIPLE MARKDOWN FILES TO HTML - AS ZIP
 ```
 The application converts all markdown files to HTML and gives you the option
