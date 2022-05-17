@@ -45,10 +45,10 @@ const ZipMarkdownToHtml = () => {
       try {
         const zipFile = new JSZip();
         const zip = await zipFile.loadAsync(toConvert);
-        const filesInsindeZip = Object.keys(zip.files);
+        const filesInsideZip = Object.keys(zip.files);
 
-        const allFilesLength = filesInsindeZip.length;
-        const onlyMdFilesLength = filesInsindeZip.filter((fileName) =>
+        const allFilesLength = filesInsideZip.length;
+        const onlyMdFilesLength = filesInsideZip.filter((fileName) =>
           fileName.match(/.md/)
         ).length;
 
@@ -56,7 +56,7 @@ const ZipMarkdownToHtml = () => {
           ? allFilesLength
           : onlyMdFilesLength;
 
-        for (let fileName of filesInsindeZip) {
+        for (let fileName of filesInsideZip) {
           zip.files[fileName].async('string').then((fileData) => {
             if (fileName.match(/.md/)) {
               const html = convertToHtml(fileData);
