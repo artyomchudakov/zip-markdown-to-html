@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react';
-// import AppDescription from '../Static/AppDescription';
-// import LocalConversionDescription from '../Static/LocalConversionDescription';
-// import EmptyConversionAttempt from '../Static/EmptyConversionAttempt';
-// import LoadingAnimation from '../Static/LoadingAnimation';
+
 import {
   AppDescription,
   LocalConversionDescription,
   EmptyConversionAttempt,
   LoadingAnimation,
 } from '../Static';
+import { downloadZip } from './downloadZip';
+import { convertToHtml } from './convertToHtml';
+import { createFile } from './createFile';
 
 import axios from 'axios';
 import JSZip from 'jszip';
-import showdown from 'showdown';
-import { saveAs } from 'file-saver';
 
 import { Search } from 'gitea-react-toolkit';
 
@@ -47,25 +45,26 @@ const ZipMarkdownToHtml = () => {
       try {
         const zipFile = new JSZip();
         const zip = await zipFile.loadAsync(toConvert);
-        const allFilesLength = Object.keys(zip.files).length;
-        const onlyMdFilesLength = Object.keys(zip.files).filter((file) =>
-          file.match(/.md/)
+        const filesInsindeZip = Object.keys(zip.files);
+
+        const allFilesLength = filesInsindeZip.length;
+        const onlyMdFilesLength = filesInsindeZip.filter((fileName) =>
+          fileName.match(/.md/)
         ).length;
+
         initialZipFileLength = isIncludeAllFilesChecked
           ? allFilesLength
           : onlyMdFilesLength;
-        for (let fileName of Object.keys(zip.files)) {
+
+        for (let fileName of filesInsindeZip) {
           zip.files[fileName].async('string').then((fileData) => {
             if (fileName.match(/.md/)) {
-              const converter = new showdown.Converter();
-              const html = converter.makeHtml(fileData);
-              const blob = new Blob([html]);
-              const newFile = new File([blob], fileName.replace('.md', '.html'));
+              const html = convertToHtml(fileData);
+              const newFile = createFile(html, fileName.replace('.md', '.html'));
               filesArray.push(newFile);
             } else {
               if (isIncludeAllFilesChecked) {
-                const blob = new Blob([fileData]);
-                const nonMdFile = new File([blob], fileName);
+                const nonMdFile = createFile(fileData, fileName);
                 filesArray.push(nonMdFile);
               }
             }
@@ -103,12 +102,7 @@ const ZipMarkdownToHtml = () => {
 
     if (convertedFiles.length === initialZipFileLength) {
       const zipFile = new JSZip();
-      for (let file = 0; file < convertedFiles.length; file++) {
-        zipFile.file(convertedFiles[file].name, convertedFiles[file]);
-      }
-      zipFile.generateAsync({ type: 'blob' }).then((content) => {
-        saveAs(content, 'converted.zip');
-      });
+      downloadZip(zipFile, convertedFiles);
     }
   };
 
