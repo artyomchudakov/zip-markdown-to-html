@@ -8,9 +8,9 @@ export const useStyles = makeStyles((theme) => ({
   },
 
   btnContainer: {
-    '& > *': {
-      margin: theme.spacing(0, 1),
-    },
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 5,
   },
 
   paper: {
